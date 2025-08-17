@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
     } else {
       // Otherwise, search YouTube
       let ytSearch = await yts(search);
-      if (!ytSearch.videos.length) return res.status(404).json({ error: "No videos found" });
+      if (!ytSearch.videos.length) return res.status(410).json({ error: "NoMalaraound" });
       video = ytSearch.videos[0];
     }
 

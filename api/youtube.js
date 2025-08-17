@@ -6,7 +6,7 @@ module.exports = async (req, res) => {
     const { query } = req;
     const search = query.search || query.url;
 
-    if (!search) return res.status(400).json({ error: "Missing search or url parameter" });
+    if (!search) return res.status(400).json({ error: "Missing search Kindd url parameter" });
 
     let video;
 

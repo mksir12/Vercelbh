@@ -25,43 +25,71 @@ export default {
     // 📌 Root (/) →  with visitors count
     if (path === "/") {
       let html = jerryHtml;
-    let totalVisitors = 0;
+    html = html || "<h4 class='text-primary mb-0' id='visitors'>0</h4><h5 class='mb-0' id='total-visitors'>0</h5><ul id='usage-list'></ul>";
 
-    try {
-      // Ensure visitors table exists
-      await env.VISITOR_DB.prepare(`
-        CREATE TABLE IF NOT EXISTS visitors (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-      `).run();
+  // 1️⃣ Visitor count
+  let totalVisitors = 0;
+  try {
+    await env.VISITOR_DB.prepare(`
+      CREATE TABLE IF NOT EXISTS visitors (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `).run();
 
-      // Increment visitor count
-      await env.VISITOR_DB.prepare(`INSERT INTO visitors DEFAULT VALUES`).run();
+    await env.VISITOR_DB.prepare(`INSERT INTO visitors DEFAULT VALUES`).run();
 
-      // Get total visitors
-      const result = await env.VISITOR_DB.prepare(`SELECT COUNT(*) AS total FROM visitors`).all();
-      totalVisitors = result.results[0]?.total || 0;
-    } catch (dbErr) {
-      console.error("D1 error:", dbErr);
-      totalVisitors = 0; // fallback
+    const result = await env.VISITOR_DB.prepare(`SELECT COUNT(*) AS total FROM visitors`).all();
+    totalVisitors = result.results[0]?.total || 0;
+  } catch (err) {
+    console.error("D1 error:", err);
+  }
+
+  html = html.replace(
+    /<h4 class="text-primary mb-0" id="visitors">.*?<\/h4>/,
+    `<h4 class="text-primary mb-0" id="visitors">${totalVisitors}</h4>`
+  );
+  html = html.replace(
+    /<h5 class="mb-0" id="total-visitors">.*?<\/h5>/,
+    `<h5 class="mb-0" id="total-visitors">${totalVisitors}</h5>`
+  );
+
+  // 2️⃣ Fetch usage data
+  let usageData = [];
+  try {
+    const res = await fetch("https://jerrycoder.oggyapi.workers.dev/peace");
+    usageData = await res.json();
+  } catch (err) {
+    console.error("Error fetching usage:", err);
+  }
+
+  // Render the list items into your existing card section
+  const usageHtml = usageData.map(item => `
+    <li class="mb-2 d-flex align-items-center">
+      <div class="avatar me-2">
+        <div class="avatar-initial bg-label-success rounded shadow-xs">
+          <i class="ri ri-checkbox-circle-line ri-24px"></i>
+        </div>
+      </div>
+      <div class="details flex-grow-1">
+        <span class="name">${item.name}</span>
+        <span class="time d-block">
+          <i class="ri ri-calendar-line me-1"></i> ${item.time}
+        </span>
+      </div>
+      <div>
+        <span class="tag">${item.tag}</span>
+      </div>
+    </li>
+  `).join("");
+
+  // Inject into the existing <ul id="usage-list"> inside your card
+  html = html.replace('<ul id="usage-list" class="p-0 m-0 list-unstyled"></ul>', `<ul id="usage-list" class="p-0 m-0 list-unstyled">${usageHtml}</ul>`);
+
+  return new Response(html, {
+    headers: { "Content-Type": "text/html; charset=UTF-8" },
+  });
     }
-
-    // Inject visitor count into HTML
-    html = html.replace(
-      /<h4 class="text-primary mb-0" id="visitors">.*?<\/h4>/,
-      `<h4 class="text-primary mb-0" id="visitors">${totalVisitors}</h4>`
-    );
-
-    html = html.replace(
-      /<h5 class="mb-0" id="total-visitors">.*?<\/h5>/,
-      `<h5 class="mb-0" id="total-visitors">${totalVisitors}</h5>`
-    );
-
-    return new Response(html, {
-      headers: { "Content-Type": "text/html" },
-    });
-   }
 
     // ❌ Undefined routes → Error page
     return new Response(errorHtml, {
@@ -1401,47 +1429,6 @@ function createGauge(percentage) {
 createGauge(97.86);
 </script>
     
-<script>
-async function loadUsage() {
-  try {
-    // 👉 Replace with your Worker endpoint
-    const res = await fetch("https://jerrycoder.oggyapi.workers.dev/peace");
-    const data = await res.json();
-
-    const usageList = document.getElementById("usage-list");
-    usageList.innerHTML = ""; // clear previous
-
-    data.forEach(item => {
-      const li = document.createElement("li");
-li.innerHTML = `
-  <div class="avatar me-2">
-    <div class="avatar-initial bg-label-success rounded shadow-xs">
-      <i class="ri ri-checkbox-circle-line ri-24px"></i>
-    </div>
-  </div>
-  <div class="details flex-grow-1">
-    <span class="name">${item.name}</span>
-    <span class="time d-block">
-      <i class="ri ri-calendar-line me-1"></i> ${item.time}
-    </span>
-  </div>
-  <div>
-    <span class="tag">${item.tag}</span>
-  </div>
-`;
-usageList.appendChild(li);
-    });
-  } catch (err) {
-    console.error("Error loading data:", err);
-    document.getElementById("usage-list").innerHTML =
-      "<li class='text-danger'>Error loading data</li>";
-  }
-}
-
-// Load usage data on page load
-loadUsage();
-</script>
-
   <script src="js/jquery.js"></script>
   <script src="js/popper.js"></script>
   <script src="js/bootstrap.js"></script>

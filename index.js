@@ -1405,7 +1405,7 @@ async function loadUsage() {
     data.forEach(item => {
       const li = document.createElement("li");
 
-      li.innerHTML = `
+      li.innerHTML = \`
   <div class="avatar me-2">
     <div class="avatar-initial bg-label-success rounded shadow-xs">
       <i class="ri ri-checkbox-circle-line ri-24px"></i>
@@ -1420,7 +1420,7 @@ async function loadUsage() {
   <div>
     <span class="tag">${item.tag}</span>
   </div>
-`;
+\`;
       usageList.appendChild(li);
     });
   } catch (err) {

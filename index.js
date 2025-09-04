@@ -1413,25 +1413,23 @@ async function loadUsage() {
 
     data.forEach(item => {
       const li = document.createElement("li");
-
-      // ✅ HTML must be a string (template literal)
-      li.innerHTML = `
-        <div class="avatar me-2">
-          <div class="avatar-initial bg-label-success rounded shadow-xs">
-            <i class="ri ri-checkbox-circle-line ri-24px"></i>
-          </div>
-        </div>
-        <div class="details flex-grow-1">
-          <span class="name">${item.name}</span>
-          <span class="time d-block">
-            <i class="ri ri-calendar-line me-1"></i> ${item.time}
-          </span>
-        </div>
-        <div>
-          <span class="tag">${item.tag}</span>
-        </div>
-      `;
-      usageList.appendChild(li);
+li.innerHTML = `
+  <div class="avatar me-2">
+    <div class="avatar-initial bg-label-success rounded shadow-xs">
+      <i class="ri ri-checkbox-circle-line ri-24px"></i>
+    </div>
+  </div>
+  <div class="details flex-grow-1">
+    <span class="name">${item.name}</span>
+    <span class="time d-block">
+      <i class="ri ri-calendar-line me-1"></i> ${item.time}
+    </span>
+  </div>
+  <div>
+    <span class="tag">${item.tag}</span>
+  </div>
+`;
+usageList.appendChild(li);
     });
   } catch (err) {
     console.error("Error loading data:", err);

@@ -1325,7 +1325,7 @@ document.addEventListener("DOMContentLoaded", function() {
     );
 
     if (filtered.length === 0) {
-      resultsList.innerHTML = `<li class="list-group-item">No results found</li>`;
+      resultsList.innerHTML = "<li class=\"list-group-item\">No results found</li>";
       return;
     }
 

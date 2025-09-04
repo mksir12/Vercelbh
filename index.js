@@ -97,69 +97,208 @@ const errorHtml = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Error - Jerry API</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 Not Found</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
   <style>
     body {
       margin: 0;
+      padding: 0;
+      background: black;
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
       height: 100vh;
-      background: #000;
+      overflow-y: auto; /* enable scroll */
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      overflow: hidden;
     }
-    h1 {
-      font-size: 5em;
-      color: #0ff;
-      text-shadow: 0 0 5px #0ff, 0 0 15px #0ff, 0 0 30px #f0f, 0 0 50px #f0f;
-      position: relative;
-      animation: glitch 2s infinite;
-    }
-    @keyframes glitch {
-      0% { transform: translate(0); }
-      20% { transform: translate(-5px, 5px); }
-      40% { transform: translate(-5px, -5px); }
-      60% { transform: translate(5px, 5px); }
-      80% { transform: translate(5px, -5px); }
-      100% { transform: translate(0); }
-    }
-    h1::before, h1::after {
-      content: "Intro 500";
-      position: absolute;
-      left: 0; top: 0;
+
+    .bg-video {
+      position: fixed;
+      top: 0; left: 0;
       width: 100%; height: 100%;
-      background: #000;
-      overflow: hidden;
-      clip: rect(0, 900px, 0, 0);
+      object-fit: cover;
+      z-index: -1;
+      opacity: 0.35;
     }
-    h1::before {
-      left: 2px;
-      text-shadow: -2px 0 red;
-      animation: glitchTop 2s infinite linear alternate-reverse;
+
+    /* Status bar */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 90%;
+      max-width: 420px;
+      font-size: 0.9rem;
+      margin-top: 12px;
     }
-    h1::after {
-      left: -2px;
-      text-shadow: -2px 0 blue;
-      animation: glitchBottom 2s infinite linear alternate-reverse;
+    .status-left i, .status-right i {
+      font-size: 1.2rem;
     }
-    @keyframes glitchTop {
-      0% { clip: rect(0, 9999px, 0, 0); }
-      50% { clip: rect(10px, 9999px, 85px, 0); }
-      100% { clip: rect(0, 9999px, 0, 0); }
+    .status-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    @keyframes glitchBottom {
-      0% { clip: rect(0, 9999px, 0, 0); }
-      50% { clip: rect(85px, 9999px, 140px, 0); }
-      100% { clip: rect(0, 9999px, 0, 0); }
+
+    /* Lockscreen Center */
+    .lockscreen {
+      text-align: center;
+      margin-top: 8vh;
     }
-    audio { display:none; }
+    .time {
+      font-size: 5.2rem;
+      font-weight: 500;
+      letter-spacing: -2px;
+    }
+    .date {
+      font-size: 1.1rem;
+      margin-top: 6px;
+      opacity: 0.85;
+    }
+    .message {
+      font-size: 1.3rem;
+      margin-top: 40px;
+      opacity: 0.9;
+    }
+
+    /* Footer */
+    .footer {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-bottom: 60px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .footer i {
+      font-size: 1.2rem;
+      color: #aaa;
+    }
+
+    /* Theme toggle icon button */
+    .toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      padding: 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    .toggle i {
+      font-size: 1.4rem;
+      color: white;
+    }
+
+    /* Light theme */
+    .light {
+      background: white;
+      color: black;
+    }
+    .light .footer,
+    .light .status-bar {
+      color: black;
+    }
+    .light .footer i,
+    .light .status-bar i,
+    .light .toggle i {
+      color: black;
+    }
+    .light .toggle {
+      background: rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
-  <h1>Intro 500</h1>
-  <audio autoplay loop>
-    <source src="https://files.catbox.moe/f5855r.mp4" type="audio/mpeg">
-  </audio>
+  <!-- Background Video -->
+  <video autoplay muted loop playsinline class="bg-video">
+    <source src="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4" type="video/mp4">
+  </video>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="status-left">
+      <i class="ri-signal-fill"></i>
+      <i class="ri-wifi-fill"></i>
+    </div>
+    <div class="status-right">
+      <span id="battery-level">--%</span>
+      <i class="ri-battery-2-fill"></i>
+    </div>
+  </div>
+
+  <!-- Lockscreen -->
+  <div class="lockscreen">
+    <div class="time" id="time">00:00</div>
+    <div class="date" id="date">Monday, Jan 1</div>
+    <div class="message">
+      <i class="ri-alert-fill"></i> 404 – Page Not Found
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <i class="ri-mac-line"></i> <span id="ip">Loading IP...</span>
+  </div>
+
+  <!-- Theme Toggle Icon -->
+  <button class="toggle" onclick="toggleTheme()">
+    <i class="ri-contrast-line"></i>
+  </button>
+
+  <script>
+    // Time + Date
+    function updateTime() {
+      const now = new Date();
+      document.getElementById("time").innerText =
+        now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      document.getElementById("date").innerText =
+        now.toLocaleDateString([], { weekday: "long", month: "short", day: "numeric" });
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // Battery API
+    if (navigator.getBattery) {
+      navigator.getBattery().then(battery => {
+        function updateBattery() {
+          document.getElementById("battery-level").innerText =
+            Math.round(battery.level * 100) + "%";
+        }
+        updateBattery();
+        battery.addEventListener("levelchange", updateBattery);
+      });
+    }
+
+    // Get IP
+    fetch("https://api64.ipify.org?format=json")
+      .then(res => res.json())
+      .then(data => document.getElementById("ip").innerText = data.ip);
+
+    // Clock animation
+    anime({
+      targets: '.time',
+      scale: [0.8, 1],
+      opacity: [0, 1],
+      duration: 1500,
+      easing: 'easeOutElastic'
+    });
+
+    // Theme toggle
+    function toggleTheme() {
+      document.body.classList.toggle("light");
+    }
+  </script>
 </body>
 </html>`;

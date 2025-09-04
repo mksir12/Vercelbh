@@ -24,35 +24,46 @@ export default {
 
     // 📌 Root (/) →  with visitors count
     if (path === "/") {
-      let totalVisitors = 0;
-      try {
-        // Ensure visitors table exists
-        await env.VISITOR_DB.prepare(`
-          CREATE TABLE IF NOT EXISTS visitors (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-          )
-        `).run();
+      let html = await env.JERRY_HTML.get("index.html"); // adjust key if needed
+    html = html || "<h4 class='text-primary mb-0' id='visitors'>0</h4><h5 class='mb-0' id='total-visitors'>0</h5>";
 
-        // Increment visitor count
-        await env.VISITOR_DB.prepare(`INSERT INTO visitors DEFAULT VALUES`).run();
+    let totalVisitors = 0;
 
-        // Get total visitors
-        const result = await env.VISITOR_DB
-          .prepare(`SELECT COUNT(*) AS total FROM visitors`)
-          .all();
-        totalVisitors = result.results[0]?.total || 0;
-      } catch (dbErr) {
-        console.error("D1 error:", dbErr);
-      }
+    try {
+      // Ensure visitors table exists
+      await env.VISITOR_DB.prepare(`
+        CREATE TABLE IF NOT EXISTS visitors (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `).run();
 
-      // Inject visitor count into JerryHtml
-      let html = jerryHtml.replace("{{VISITORS}}", totalVisitors);
+      // Increment visitor count
+      await env.VISITOR_DB.prepare(`INSERT INTO visitors DEFAULT VALUES`).run();
 
-      return new Response(html, {
-        headers: { "Content-Type": "text/html; charset=UTF-8" },
-      });
+      // Get total visitors
+      const result = await env.VISITOR_DB.prepare(`SELECT COUNT(*) AS total FROM visitors`).all();
+      totalVisitors = result.results[0]?.total || 0;
+    } catch (dbErr) {
+      console.error("D1 error:", dbErr);
+      totalVisitors = 0; // fallback
     }
+
+    // Inject visitor count into HTML placeholders
+    html = html.replace(
+      /<h4 class="text-primary mb-0" id="visitors">.*?<\/h4>/,
+      `<h4 class="text-primary mb-0" id="visitors">${totalVisitors}</h4>`
+    );
+
+    html = html.replace(
+      /<h5 class="mb-0" id="total-visitors">.*?<\/h5>/,
+      `<h5 class="mb-0" id="total-visitors">${totalVisitors}</h5>`
+    );
+
+    return new Response(html, {
+      headers: { "Content-Type": "text/html" },
+    });
+  }
 
     // ❌ Undefined routes → Error page
     return new Response(errorHtml, {

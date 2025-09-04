@@ -24,9 +24,7 @@ export default {
 
     // 📌 Root (/) →  with visitors count
     if (path === "/") {
-      let html = await env.JERRY_HTML.get("index.html"); // adjust key if needed
-    html = html || "<h4 class='text-primary mb-0' id='visitors'>0</h4><h5 class='mb-0' id='total-visitors'>0</h5>";
-
+      let html = jerryHtml;
     let totalVisitors = 0;
 
     try {
@@ -49,7 +47,7 @@ export default {
       totalVisitors = 0; // fallback
     }
 
-    // Inject visitor count into HTML placeholders
+    // Inject visitor count into HTML
     html = html.replace(
       /<h4 class="text-primary mb-0" id="visitors">.*?<\/h4>/,
       `<h4 class="text-primary mb-0" id="visitors">${totalVisitors}</h4>`
@@ -63,7 +61,7 @@ export default {
     return new Response(html, {
       headers: { "Content-Type": "text/html" },
     });
-  }
+   }
 
     // ❌ Undefined routes → Error page
     return new Response(errorHtml, {

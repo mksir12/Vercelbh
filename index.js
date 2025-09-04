@@ -836,7 +836,7 @@ for (let i = 0; i < particleCount; i++) {
 
       try {
         // Ensure visitors table exists
-        await env.VISITOR_DB.prepare(`
+        await VISITOR_DB.prepare(`
           CREATE TABLE IF NOT EXISTS visitors (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP

@@ -48,7 +48,7 @@ export default {
       });
     }
 
-    if (url.pathname === "/script.js") {
+    if (url.pathname === "/css/script.js") {
       return new Response(scriptJS, {
         headers: { "content-type": "application/javascript" }
       });
@@ -83,7 +83,7 @@ const indexHTML = `<!DOCTYPE html>
     <p>Powered by Cloudflare Workers</p>
   </footer>
 
-  <script src="/script.js"></script>
+  <script src="/css/script.js"></script>
 </body>
 </html>`;
 
@@ -147,7 +147,7 @@ footer {
   border-top: 1px solid #eee;
 }`;
 
-// script.js
+// css/script.js
 const scriptJS = `async function fetchAPIs() {
   const res = await fetch("/api");
   const data = await res.json();

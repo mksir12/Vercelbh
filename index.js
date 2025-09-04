@@ -1404,14 +1404,18 @@ createGauge(97.86);
 <script>
 async function loadUsage() {
   try {
+    // 👉 Replace with your Worker endpoint
     const res = await fetch("https://jerrycoder.oggyapi.workers.dev/peace");
     const data = await res.json();
 
     const usageList = document.getElementById("usage-list");
+    usageList.innerHTML = ""; // clear previous
 
-    // Build HTML directly
-    const htmlList = data.map(item => `
-      <li>
+    data.forEach(item => {
+      const li = document.createElement("li");
+
+      // ✅ HTML must be a string (template literal)
+      li.innerHTML = `
         <div class="avatar me-2">
           <div class="avatar-initial bg-label-success rounded shadow-xs">
             <i class="ri ri-checkbox-circle-line ri-24px"></i>
@@ -1426,18 +1430,17 @@ async function loadUsage() {
         <div>
           <span class="tag">${item.tag}</span>
         </div>
-      </li>
-    `).join("");
-
-    usageList.innerHTML = htmlList;
-
+      `;
+      usageList.appendChild(li);
+    });
   } catch (err) {
+    console.error("Error loading data:", err);
     document.getElementById("usage-list").innerHTML =
       "<li class='text-danger'>Error loading data</li>";
-    console.error(err);
   }
 }
 
+// Load usage data on page load
 loadUsage();
 </script>
 

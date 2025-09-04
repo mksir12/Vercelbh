@@ -1,5 +1,5 @@
 name = "cloudflare-file-hosting"
-main = "index.js"  # required for Workers Sites
+main = "workers-site/index.js"  # required even if empty
 compatibility_date = "2025-09-04"
 
 [site]

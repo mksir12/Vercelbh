@@ -1,6 +1,6 @@
 name = "cloudflare-file-hosting"
-main = "workers-site/index.js"  # required even if empty
 compatibility_date = "2025-09-04"
 
 [site]
 bucket = "./workers-site"
+entry-point = "workers-site"

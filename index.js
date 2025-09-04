@@ -11,8 +11,7 @@ export default {
 
     if (path.startsWith('/spotify')) {
       return Response.json([{ id: 1, text: "Nice API!" }]);
-      }
-    } else if (path.startsWith('/naruto')) {  // <- new route for naruto video
+    } else if (path.startsWith('/naruto')) {
       return Response.json({ username: "guest", role: "admin" });
     } else if (path.startsWith('/lost')) {
       const htmlRes = `<!DOCTYPE html><html lang="en"><head>

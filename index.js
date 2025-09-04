@@ -22,7 +22,7 @@ export default {
       });
     }
 
-    // 📌 Root (/) → JerryHtml with visitors count
+    // 📌 Root (/) →  with visitors count
     if (path === "/") {
       let totalVisitors = 0;
       try {

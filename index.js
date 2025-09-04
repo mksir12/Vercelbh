@@ -1332,7 +1332,7 @@ document.addEventListener("DOMContentLoaded", function() {
     filtered.forEach(api => {
       const li = document.createElement("li");
       li.className = "list-group-item list-group-item-action";
-      li.textContent = `${api.name} (${api.endpoint})`;
+      li.textContent = api.name + ' (' + api.endpoint + ')';
 
       // ✅ Redirect instead of fetch
       li.addEventListener("click", () => {

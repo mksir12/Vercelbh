@@ -1,6 +1,6 @@
 name = "cloudflare-file-hosting"
-type = "javascript"
-workers_dev = true
+main = "index.js"  # required for Workers Sites
+compatibility_date = "2025-09-04"
 
 [site]
 bucket = "./workers-site"

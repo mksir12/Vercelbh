@@ -1,0 +1,9 @@
+name = "cloudflare-file-hosting"
+compatibility_date = "2025-09-04"
+
+type = "javascript"
+
+# KV namespace binding
+kv_namespaces = [
+  { binding = "WEBSITE_KV", id = "c5356d9eb79242c1b3d5f8bf80cbb384" }
+]

@@ -16,21 +16,25 @@ npm install @jerrycoder/instagram-api
 ⚡ Quick Usage
 
 ## ✅ CommonJS (Node.js)
+```bash
 const { instagram } = require("@jerrycoder/instagram-api");
 
 (async () => {
   const data = await instagram("https://www.instagram.com/reel/xxxxx/");
   console.log(data);
 })();
-
+```
 
 ## ✅ ESM / Modern JS
+```bash
 import { instagram } from "@jerrycoder/instagram-api";
 
 const data = await instagram("https://www.instagram.com/reel/xxxxx/");
 console.log(data);
+```
 
 📡 Response Example
+```bash
 {
   "status": "success",
   "data": {
@@ -38,13 +42,14 @@ console.log(data);
     "url": "https://..."
   }
 }
-
+```
 
 ## ☁️ Deploy on Vercel (API Endpoint)
-```bash
+
 Create file:
  /api/instagram.js
 
+```bash
 import { instagram } from "@jerrycoder/instagram-api";
 
 export default async function handler(req, res) {
@@ -86,22 +91,22 @@ Private content is not supported
 
 Depends on external API availability
 
+
 ## 🛠️ Features
 
-⚡ Fast response
+• ⚡ Fast response
 
-📥 Download Reels / Posts / Stories
+• 📥 Download Reels / Posts / Stories
 
-🔄 Simple API structure
+• 🔄 Simple API structure
 
-🧩 Works with CommonJS & ESM
-
+• 🧩 Works with CommonJS & ESM
 
 
 ## 🧪 Status
 
-✅ Fully Tested on Node.js & Vercel
-🚀 Version: 2.5.5 (Latest)
+° ✅ Fully Tested on Node.js & Vercel
+° 🚀 Version: 2.5.5 (Latest)
 
 
 ## 📄 License

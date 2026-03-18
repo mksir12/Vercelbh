@@ -103,6 +103,16 @@ Depends on external API availability
 • 🧩 Works with CommonJS & ESM
 
 
+## 🔐 Security
+
+This package makes HTTP requests to:
+https://jerrycoder.oggyapi.workers.dev
+
+- No personal data is collected
+- No tracking is performed
+- Open for inspection
+
+
 ## 🧪 Status
 
 ° ✅ Fully Tested on Node.js & Vercel

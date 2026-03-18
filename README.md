@@ -1,6 +1,6 @@
-# 📦 @jerrycoder/instagram-api
+# @jerrycoder/instagram-api
 
-Unofficial Instagram Downloader API — fetch Reels, Posts, and Stories using JerryCoder API.
+Unofficial Instagram Downloader API — fetch Reels, Posts, Stories using JerryCoder API.
 
 
 ## 🌐 API Website
@@ -106,6 +106,7 @@ Depends on external API availability
 ## 🧪 Status
 
 ° ✅ Fully Tested on Node.js & Vercel
+
 ° 🚀 Version: 2.5.5 (Latest)
 
 

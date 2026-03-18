@@ -17,7 +17,7 @@ Unofficial Instagram Downloader API — fetch Reels, Posts, Stories using JerryC
 npm install @jerrycoder/instagram-api
 ```
 
-⚡ Quick Usage
+## ⚡ Quick Usage
 
 ## ✅ CommonJS (Node.js)
 ```js
@@ -37,7 +37,7 @@ const data = await instagram("https://www.instagram.com/reel/xxxxx/");
 console.log(data);
 ```
 
-📡 Response Example
+## 📡 Response Example
 ```json
 {
   "status": "success",
@@ -99,13 +99,13 @@ Depends on external API availability
 
 ## 🛠️ Features
 
-• ⚡ Fast response
+- ⚡ Fast response
 
-• 📥 Download Reels / Posts / Stories
+- 📥 Download Reels / Posts / Stories
 
-• 🔄 Simple API structure
+- 🔄 Simple API structure
 
-• 🧩 Works with CommonJS & ESM
+- 🧩 Works with CommonJS & ESM
 
 
 ## 🔐 Security
@@ -121,10 +121,12 @@ This package uses the official API:
 
 ## 🧪 Status
 
-° ✅ Fully Tested on Node.js & Vercel
+- ✅ Fully Tested on Node.js & Vercel
 
-° 🚀 Version: 2.5.5 (Latest)
+- 🚀 Version: 2.5.5 (Latest)
 
 
 ## 📄 License
 MIT License © JerryCoder
+
+> 🚀 Simple & fast Instagram downloader API for Node.js and Vercel

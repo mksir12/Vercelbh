@@ -1,10 +1,14 @@
+![npm version](https://img.shields.io/npm/v/@jerrycoder/instagram-api)
+![downloads](https://img.shields.io/npm/dw/@jerrycoder/instagram-api)
+![license](https://img.shields.io/npm/l/@jerrycoder/instagram-api)
+
 # @jerrycoder/instagram-api
 
 Unofficial Instagram Downloader API — fetch Reels, Posts, Stories using JerryCoder API.
 
 
 ## 🌐 API Website
-[https://jerrycoder.oggyapi.workers.dev](https://jerrycoder.oggyapi.workers.dev)
+[Official API Endpoint](https://jerrycoder.oggyapi.workers.dev)
 
 
 ## 🚀 Installation
@@ -16,7 +20,7 @@ npm install @jerrycoder/instagram-api
 ⚡ Quick Usage
 
 ## ✅ CommonJS (Node.js)
-```bash
+```js
 const { instagram } = require("@jerrycoder/instagram-api");
 
 (async () => {
@@ -26,7 +30,7 @@ const { instagram } = require("@jerrycoder/instagram-api");
 ```
 
 ## ✅ ESM / Modern JS
-```bash
+```js
 import { instagram } from "@jerrycoder/instagram-api";
 
 const data = await instagram("https://www.instagram.com/reel/xxxxx/");
@@ -34,7 +38,7 @@ console.log(data);
 ```
 
 📡 Response Example
-```bash
+```json
 {
   "status": "success",
   "data": {
@@ -49,7 +53,7 @@ console.log(data);
 Create file:
  /api/instagram.js
 
-```bash
+```js
 import { instagram } from "@jerrycoder/instagram-api";
 
 export default async function handler(req, res) {
@@ -81,7 +85,8 @@ export default async function handler(req, res) {
 
 ## 🔗 API Usage (after deploy)
 
-https://your-domain.vercel.app/api/instagram?url=INSTAGRAM_URL
+Example:
+`https://your-domain.vercel.app/api/instagram?url=INSTAGRAM_URL`
 
 
 ## ⚠️ Notes
@@ -105,12 +110,13 @@ Depends on external API availability
 
 ## 🔐 Security
 
-This package makes HTTP requests to:
-https://jerrycoder.oggyapi.workers.dev
+This package uses the official API:
+
+👉 [JerryCoder API](https://jerrycoder.oggyapi.workers.dev)
 
 - No personal data is collected
-- No tracking is performed
-- Open for inspection
+- No tracking or analytics
+- Only used to fetch public Instagram media
 
 
 ## 🧪 Status

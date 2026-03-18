@@ -4,13 +4,14 @@ Unofficial Instagram Downloader API — fetch Reels, Posts, and Stories using Je
 
 
 ## 🌐 API Website
-👉 https://jerrycoder.oggyapi.workers.dev
+[https://jerrycoder.oggyapi.workers.dev](https://jerrycoder.oggyapi.workers.dev)
 
 
 ## 🚀 Installation
 
 ```bash
 npm install @jerrycoder/instagram-api
+```
 
 ⚡ Quick Usage
 
@@ -40,9 +41,8 @@ console.log(data);
 
 
 ## ☁️ Deploy on Vercel (API Endpoint)
-Create file:
-
 ```bash
+Create file:
  /api/instagram.js
 
 import { instagram } from "@jerrycoder/instagram-api";
@@ -72,7 +72,7 @@ export default async function handler(req, res) {
     });
   }
 }
-
+```
 
 ## 🔗 API Usage (after deploy)
 

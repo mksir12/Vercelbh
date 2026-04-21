@@ -86,7 +86,7 @@ video {
 </div>
 
 <script>
-const API_BASE = "https://jakup.oggyapi-574.workers.dev"; // 🔥 CHANGE THIS
+const API_BASE = "https://jakup.oggyapi-574.workers.dev";
 
 async function search() {
   const query = document.getElementById("searchInput").value;
@@ -103,13 +103,24 @@ async function search() {
     return;
   }
 
-  data.results.forEach(movie => {
+  // ✅ FILTER ONLY VIDEO FILES
+  const videos = data.results.filter(m =>
+    m.title.toLowerCase().endsWith(".mkv") ||
+    m.title.toLowerCase().endsWith(".mp4")
+  );
+
+  if (videos.length === 0) {
+    resultsDiv.innerHTML = "<p>⚠️ Only subtitles found (.srt), no video files</p>";
+    return;
+  }
+
+  videos.forEach(movie => {
     const div = document.createElement("div");
     div.className = "movie";
 
     div.innerHTML = `
       <b>${movie.title}</b><br>
-      🎞 ${movie.year || "Unknown"} | 🌐 ${movie.language || "Unknown"} | 📺 ${movie.quality || "Unknown"}
+      🎞 ${movie.year} | 🌐 ${movie.language} | 📺 ${movie.quality}
     `;
 
     div.onclick = () => playMovie(movie.file_id);
@@ -120,7 +131,6 @@ async function search() {
 
 function playMovie(file_id) {
   const player = document.getElementById("player");
-
   player.src = `${API_BASE}/api/stream?file_id=${file_id}`;
   player.play();
 }

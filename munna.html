@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movie Search</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+  margin: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.search-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #22c55e;
+  color: white;
+  cursor: pointer;
+}
+
+.movie {
+  background: #1e293b;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.movie:hover {
+  background: #334155;
+}
+
+.video-player {
+  margin-top: 20px;
+}
+
+video {
+  width: 100%;
+  border-radius: 10px;
+  background: black;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>🎬 Movie Search</h1>
+
+  <div class="search-box">
+    <input id="searchInput" placeholder="Search movie...">
+    <button onclick="search()">Search</button>
+  </div>
+
+  <div id="results"></div>
+
+  <div class="video-player">
+    <video id="player" controls></video>
+  </div>
+</div>
+
+<script>
+const API_BASE = "https://jakup.oggyapi-574.workers.dev"; // 🔥 CHANGE THIS
+
+async function search() {
+  const query = document.getElementById("searchInput").value;
+  if (!query) return alert("Enter movie name");
+
+  const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}`);
+  const data = await res.json();
+
+  const resultsDiv = document.getElementById("results");
+  resultsDiv.innerHTML = "";
+
+  if (!data.results || data.results.length === 0) {
+    resultsDiv.innerHTML = "<p>No results found</p>";
+    return;
+  }
+
+  data.results.forEach(movie => {
+    const div = document.createElement("div");
+    div.className = "movie";
+
+    div.innerHTML = `
+      <b>${movie.title}</b><br>
+      🎞 ${movie.year || "Unknown"} | 🌐 ${movie.language || "Unknown"} | 📺 ${movie.quality || "Unknown"}
+    `;
+
+    div.onclick = () => playMovie(movie.file_id);
+
+    resultsDiv.appendChild(div);
+  });
+}
+
+function playMovie(file_id) {
+  const player = document.getElementById("player");
+
+  player.src = `${API_BASE}/api/stream?file_id=${file_id}`;
+  player.play();
+}
+</script>
+</body>
+</html>

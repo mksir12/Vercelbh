@@ -1,61 +1,90 @@
 export default async function handler(req, res) {
-  res.setHeader("Content-Type", "application/json");
-
-  const { url } = req.query;
-
-  if (!url) {
-    return res.status(400).json({ error: "Missing url parameter" });
-  }
-
   try {
-    const response = await fetch("https://snapinsta.top/action.php", {
+    const { url } = req.query;
+
+    if (!url) {
+      return res.status(400).json({
+        success: false,
+        error: "Missing url parameter",
+      });
+    }
+
+    // ✅ Create multipart form data
+    const form = new FormData();
+    form.append("url", url);
+    form.append("action", "post");
+
+    // ✅ Request
+    const response = await fetch("https://apdev.in.net/action.php", {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
         "User-Agent":
-          "Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0",
-        "Origin": "https://snapinsta.top",
-        "Referer": "https://snapinsta.top/"
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/148 Safari/537.36",
+        Origin: "https://apdev.in.net",
+        Referer: "https://apdev.in.net/",
+        Accept: "*/*",
       },
-      body: new URLSearchParams({
-        url: url
-      })
+      body: form,
     });
 
     const html = await response.text();
 
-    if (!html) {
-      return res.status(500).json({ error: "Empty response" });
+    // DEBUG
+    console.log(html);
+
+    // =========================
+    // ✅ THUMBNAIL EXTRACT
+    // =========================
+    let thumbnail = null;
+
+    const thumbMatch = html.match(
+      /<img[^>]+src="([^"]+)"/i
+    );
+
+    if (thumbMatch && thumbMatch[1]) {
+      thumbnail = thumbMatch[1];
+
+      // Fix relative URL
+      if (thumbnail.startsWith("/")) {
+        thumbnail = "https://apdev.in.net" + thumbnail;
+      }
     }
 
-    // Extrct download link using regex
-    const match = html.match(/href=['"](\/dl\.php\?token=[^'"]+)['"]/i);
+    // =========================
+    // ✅ DOWNLOAD LINK EXTRACT
+    // =========================
+    let download = null;
 
-    if (match && match[1]) {
-      const downloadLink = "https://snapinsta.top" + match[1];
+    const dlMatch = html.match(
+      /href="(\/dl\.php\?token=[^"]+)"/i
+    );
 
-      return res.status(200).json({
-        success: true,
-        download: downloadLink
-      });
+    if (dlMatch && dlMatch[1]) {
+      download = "https://apdev.in.net" + dlMatch[1];
     }
 
-    // Detect error message
-    if (html.toLowerCase().includes("error")) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid Instagram URL or media not available"
-      });
+    // =========================
+    // ✅ TYPE DETECT
+    // =========================
+    let type = "image";
+
+    if (html.includes("icon-dlvideo")) {
+      type = "video";
     }
 
-    return res.status(404).json({
-      success: false,
-      error: "Download link not found"
+    return res.status(200).json({
+      success: true,
+      thumbnail,
+      download,
+      type,
     });
 
-  } catch (err) {
+  } catch (error) {
+    console.error(error);
+
     return res.status(500).json({
-      error: err.message
+      success: false,
+      error: error.message,
     });
   }
 }

@@ -9,79 +9,53 @@ export default async function handler(req, res) {
       });
     }
 
-    // ✅ Create multipart form data
-    const form = new FormData();
-    form.append("url", url);
-    form.append("action", "post");
+    const body = new URLSearchParams();
+    body.append("url", url);
+    body.append("v", "3");
+    body.append("lang", "en");
 
-    // ✅ Request
-    const response = await fetch("https://apdev.in.net/action.php", {
+    const response = await fetch("https://api.downloadgram.org/media", {
       method: "POST",
       headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
         "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/148 Safari/537.36",
-        Origin: "https://apdev.in.net",
-        Referer: "https://apdev.in.net/",
-        Accept: "*/*",
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+        "Referer": "https://downloadgram.org/",
+        "Origin": "https://downloadgram.org",
       },
-      body: form,
+      body: body.toString(),
     });
 
-    const html = await response.text();
+    let text = await response.text();
 
-    // DEBUG
-    console.log(html);
+    // ✅ STEP 1: Decode escaped characters
+    text = text
+      .replace(/\\x22/g, '"') // quotes
+      .replace(/\\x20/g, ' ') // spaces
+      .replace(/\\n/g, '')
+      .replace(/\\r/g, '');
 
-    // =========================
-    // ✅ THUMBNAIL EXTRACT
-    // =========================
-    let thumbnail = null;
+    // ✅ STEP 2: Extract video
+    const videoMatch = text.match(/<source[^>]+src="([^"]+)"/i);
+    const video = videoMatch ? videoMatch[1] : null;
 
-    const thumbMatch = html.match(
-      /<img[^>]+src="([^"]+)"/i
-    );
+    // ✅ STEP 3: Extract thumbnail
+    const thumbMatch = text.match(/poster="([^"]+)"/i);
+    const thumbnail = thumbMatch ? thumbMatch[1] : null;
 
-    if (thumbMatch && thumbMatch[1]) {
-      thumbnail = thumbMatch[1];
-
-      // Fix relative URL
-      if (thumbnail.startsWith("/")) {
-        thumbnail = "https://apdev.in.net" + thumbnail;
-      }
-    }
-
-    // =========================
-    // ✅ DOWNLOAD LINK EXTRACT
-    // =========================
-    let download = null;
-
-    const dlMatch = html.match(
-      /href="(\/dl\.php\?token=[^"]+)"/i
-    );
-
-    if (dlMatch && dlMatch[1]) {
-      download = "https://apdev.in.net" + dlMatch[1];
-    }
-
-    // =========================
-    // ✅ TYPE DETECT
-    // =========================
-    let type = "image";
-
-    if (html.includes("icon-dlvideo")) {
-      type = "video";
-    }
+    // ✅ STEP 4: Extract download link
+    const downloadMatch = text.match(/<a[^>]+href="([^"]+)"/i);
+    const download = downloadMatch ? downloadMatch[1] : video;
 
     return res.status(200).json({
       success: true,
+      type: "video",
       thumbnail,
+      video,
       download,
-      type,
     });
 
   } catch (error) {
-    console.error(error);
-
     return res.status(500).json({
       success: false,
       error: error.message,

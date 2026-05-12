@@ -1,43 +1,56 @@
-// File: api/ip.js
+// api/ip.js
 
 export default async function handler(req, res) {
-  // CORS Headers
+  // CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "*");
 
-  // Handle preflight
+  // OPTIONS
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  // Only allow GET
-  if (req.method !== "GET") {
-    return res.status(405).json({
-      error: "Method Not Allowed",
-    });
-  }
-
   try {
-    // Get user IP
+    // Get real user IP
     let ip =
       req.headers["x-forwarded-for"]?.split(",")[0] ||
       req.socket?.remoteAddress ||
       req.ip;
 
-    // Clean localhost IPv6 format
+    // localhost fix
     if (ip === "::1") ip = "127.0.0.1";
 
-    // Fetch IP details
-    const response = await fetch(`https://ipapi.co/${ip}/json/`);
+    // remove ipv6 prefix
+    if (ip.startsWith("::ffff:")) {
+      ip = ip.replace("::ffff:", "");
+    }
+
+    // Fetch IP info
+    const response = await fetch(`https://ipwho.is/${ip}`);
     const data = await response.json();
 
-    // Same response style
-    return res.status(200).json(data);
-  } catch (err) {
+    // Custom response like ipapi
+    return res.status(200).json({
+      ip: data.ip,
+      success: data.success,
+      type: data.type,
+      continent: data.continent,
+      continent_code: data.continent_code,
+      country: data.country,
+      country_code: data.country_code,
+      region: data.region,
+      city: data.city,
+      latitude: data.latitude,
+      longitude: data.longitude,
+      timezone: data.timezone?.id,
+      postal: data.postal,
+      connection: data.connection,
+    });
+  } catch (error) {
     return res.status(500).json({
-      error: "Failed to fetch IP details",
-      message: err.message,
+      error: true,
+      message: error.message,
     });
   }
 }
